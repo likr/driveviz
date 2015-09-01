@@ -1,0 +1,12 @@
+{
+  "name": "driveviz",
+  "version": "1.0.0",
+  "description": "",
+  "main": "viz-drive.js",
+  "scripts": {
+    "watch": "watchify src/index.jsx -o app/bundle.js -t [ babelify --stage 0 --optional runtime ] -v --extension=.jsx",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT"
+}
