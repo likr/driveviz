@@ -11,15 +11,10 @@ const colorOptions = {
   fileType: "File Type"
 };
 
-const partition = d3.layout.partition()
-  .sort(null)
-  .value((d) => d.fileSize);
-
-const arc = d3.svg.arc()
-  .startAngle((d) => d.x)
-  .endAngle((d) => d.x + d.dx)
-  .innerRadius((d) => Math.sqrt(d.y))
-  .outerRadius((d) => Math.sqrt(d.y + d.dy));
+const valueOptions = {
+  fileCount: "File Count",
+  fileSize: "File Size"
+};
 
 const getFilename = (d) => {
   if (d.title) {
@@ -30,6 +25,15 @@ const getFilename = (d) => {
   }
   return "ROOT";
 };
+
+const partition = d3.layout.partition()
+  .sort((a, b) => d3.ascending(getFilename(a), getFilename(b)));
+
+const arc = d3.svg.arc()
+  .startAngle((d) => d.x)
+  .endAngle((d) => d.x + d.dx)
+  .innerRadius((d) => Math.sqrt(d.y))
+  .outerRadius((d) => Math.sqrt(d.y + d.dy));
 
 @connect(({files}) => ({
   files: files.files
@@ -42,6 +46,7 @@ class Main extends React.Component {
       width: window.innerWidth,
       height: window.innerHeight,
       colorOption: colorOptions.owner,
+      valueOption: valueOptions.fileSize,
       selectedFilename: ""
     };
   }
@@ -66,6 +71,11 @@ class Main extends React.Component {
     const {width, height} = this.state;
     const radius = Math.min(width, height) / 2 * 0.95;
     partition.size([2 * Math.PI, radius * radius]);
+    if (this.state.valueOption === valueOptions.fileCount) {
+      partition.value(() => 1);
+    } else {
+      partition.value((d) => d.fileSize);
+    }
 
     const color = (d) => {
       if (this.state.colorOption === colorOptions.owner) {
@@ -103,6 +113,21 @@ class Main extends React.Component {
         </div>
       );
     });
+
+    const valueRadioButtons = Object.keys(valueOptions).map((key) => {
+      const value = valueOptions[key];
+      return (
+        <div className="radio">
+          <label>
+            <input
+              type="radio"
+              checked={this.state.valueOption === value}
+              onChange={this.handleChangeValue.bind(this, value)}/> {value}
+          </label>
+        </div>
+      );
+    });
+
     return (
       <div>
         <div style={{
@@ -120,18 +145,34 @@ class Main extends React.Component {
         </div>
         <div style={{
           position: "absolute",
-          left: 10,
-          top: 10,
+          left: "30px",
+          top: "10px",
           width: "200px"
         }}>
-          <button className="btn btn-block btn-default btn-lg" onClick={::this.handleClickBack}>Back</button>
           <div>
             <h3>Color</h3>
             {colorRadioButtons}
           </div>
           <div>
-            <p>{this.state.selectedFilename}</p>
+            <h3>Value</h3>
+            {valueRadioButtons}
           </div>
+        </div>
+        <div style={{
+          position: "absolute",
+          right: "30px",
+          top: "30px",
+          width: "200px"
+        }}>
+          <p>{this.state.selectedFilename}</p>
+        </div>
+        <div style={{
+          position: "absolute",
+          right: "30px",
+          bottom: "30px",
+          width: "200px"
+        }}>
+          <button className="btn btn-block btn-default btn-lg" onClick={::this.handleClickBack}>Back</button>
         </div>
       </div>
     );
@@ -154,6 +195,12 @@ class Main extends React.Component {
   handleChangeColor(value) {
     this.setState({
       colorOption: value
+    });
+  }
+
+  handleChangeValue(value) {
+    this.setState({
+      valueOption: value
     });
   }
 }
