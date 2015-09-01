@@ -4,7 +4,12 @@ import {connect} from "react-redux";
 import d3 from "d3";
 import {back, forward, loadFiles} from "../actions";
 
-const color = d3.scale.category20c();
+const ownerColor = d3.scale.category20c();
+const fileTypeColor = d3.scale.category20c();
+const colorOptions = {
+  owner: "Owner",
+  fileType: "File Type"
+};
 
 const partition = d3.layout.partition()
   .sort(null)
@@ -36,6 +41,7 @@ class Main extends React.Component {
     this.state = {
       width: window.innerWidth,
       height: window.innerHeight,
+      colorOption: colorOptions.owner,
       selectedFilename: ""
     };
   }
@@ -61,6 +67,14 @@ class Main extends React.Component {
     const radius = Math.min(width, height) / 2 * 0.95;
     partition.size([2 * Math.PI, radius * radius]);
 
+    const color = (d) => {
+      if (this.state.colorOption === colorOptions.owner) {
+        return ownerColor(d.ownerNames ? d.ownerNames[0] : (d.item ? d.item.ownerNames[0] : null));
+      }
+      if (this.state.colorOption === colorOptions.fileType) {
+        return fileTypeColor(d.mimeType || (d.item ? d.item.mimeType : null));
+      }
+    };
     const paths = partition(this.props.files).map((d) => {
       return (
         <path
@@ -72,7 +86,21 @@ class Main extends React.Component {
           onClick={this.handleClickPath.bind(this, d)}
           d={arc(d)}
           stroke="black"
-          fill={color(d.ownerNames ? d.ownerNames[0] : (d.item ? d.item.ownerNames[0] : null))}/>
+          fill={color(d)}/>
+      );
+    });
+
+    const colorRadioButtons = Object.keys(colorOptions).map((key) => {
+      const value = colorOptions[key];
+      return (
+        <div className="radio">
+          <label>
+            <input
+              type="radio"
+              checked={this.state.colorOption === value}
+              onChange={this.handleChangeColor.bind(this, value)}/> {value}
+          </label>
+        </div>
       );
     });
     return (
@@ -92,14 +120,17 @@ class Main extends React.Component {
         </div>
         <div style={{
           position: "absolute",
-          left: 0,
-          top: 0
+          left: 10,
+          top: 10,
+          width: "200px"
         }}>
+          <button className="btn btn-block btn-default btn-lg" onClick={::this.handleClickBack}>Back</button>
           <div>
-            <button onClick={::this.handleClickBack}>Back</button>
+            <h3>Color</h3>
+            {colorRadioButtons}
           </div>
           <div>
-            <p style={{color: "white"}}>{this.state.selectedFilename}</p>
+            <p>{this.state.selectedFilename}</p>
           </div>
         </div>
       </div>
@@ -118,6 +149,12 @@ class Main extends React.Component {
 
   handleClickBack() {
     this.props.dispatch(back());
+  }
+
+  handleChangeColor(value) {
+    this.setState({
+      colorOption: value
+    });
   }
 }
 
