@@ -36,6 +36,7 @@ const arc = d3.svg.arc()
   .outerRadius((d) => Math.sqrt(d.y + d.dy));
 
 @connect(({files}) => ({
+  path: files.path,
   files: files.files
 }))
 class Main extends React.Component {
@@ -164,6 +165,7 @@ class Main extends React.Component {
           top: "30px",
           width: "200px"
         }}>
+          <p>{this.props.path}</p>
           <p>{this.state.selectedFilename}</p>
         </div>
         <div style={{
