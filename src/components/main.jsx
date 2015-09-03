@@ -93,8 +93,8 @@ class Main extends React.Component {
           style={{
             cursor: "pointer"
           }}
-          onMouseOver={this.handleMouseOver.bind(this, d)}
           onClick={this.handleClickPath.bind(this, d)}
+          onDoubleClick={this.handleDoubleClickPath.bind(this, d)}
           d={arc(d)}
           stroke="black"
           fill={color(d)}/>
@@ -180,13 +180,13 @@ class Main extends React.Component {
     );
   }
 
-  handleMouseOver(d) {
+  handleClickPath(d) {
     this.setState({
       selectedFilename: getFilename(d)
     });
   }
 
-  handleClickPath(d) {
+  handleDoubleClickPath(d) {
     this.props.dispatch(forward(d));
   }
 
