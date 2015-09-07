@@ -174,7 +174,7 @@ class Main extends React.Component {
           <div style={{
             width: "100px"
           }}>
-            <button className="btn btn-block btn-default btn-lg" disabled={this.state.selectedFile === null} onClick={::this.handleClickOpen}>Open</button>
+            <button className="btn btn-block btn-default btn-lg" disabled={this.state.selectedFile === null || this.state.selectedFile.depth === 0} onClick={::this.handleClickOpen}>Open</button>
             <button className="btn btn-block btn-default btn-lg" disabled={this.props.path === ""} onClick={::this.handleClickBack}>Back</button>
           </div>
         </div>
