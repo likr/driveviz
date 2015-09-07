@@ -147,7 +147,7 @@ class Main extends React.Component {
         <div style={{
           position: "absolute",
           left: "30px",
-          top: "10px",
+          bottom: "20px",
           width: "200px"
         }}>
           <div>
@@ -161,9 +161,8 @@ class Main extends React.Component {
         </div>
         <div style={{
           position: "absolute",
-          right: "30px",
-          top: "30px",
-          width: "200px"
+          left: "30px",
+          top: "30px"
         }}>
           <p>{this.props.path}</p>
           <p>{this.state.selectedFilename}</p>
@@ -172,7 +171,7 @@ class Main extends React.Component {
           position: "absolute",
           right: "30px",
           bottom: "30px",
-          width: "200px"
+          width: "100px"
         }}>
           <button className="btn btn-block btn-default btn-lg" onClick={::this.handleClickBack}>Back</button>
         </div>
