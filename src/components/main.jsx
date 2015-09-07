@@ -3,6 +3,7 @@ import React from "react";
 import {connect} from "react-redux";
 import d3 from "d3";
 import {back, forward, loadFiles} from "../actions";
+import path from "../utils/path";
 
 const ownerColor = d3.scale.category20c();
 const fileTypeColor = d3.scale.category20c();
@@ -17,6 +18,9 @@ const valueOptions = {
 };
 
 const getFilename = (d) => {
+  if (d === null) {
+    return "";
+  }
   if (d.title) {
     return d.title;
   }
@@ -48,7 +52,7 @@ class Main extends React.Component {
       height: window.innerHeight,
       colorOption: colorOptions.owner,
       valueOption: valueOptions.fileSize,
-      selectedFilename: ""
+      selectedFile: null
     };
   }
 
@@ -94,7 +98,6 @@ class Main extends React.Component {
             cursor: "pointer"
           }}
           onClick={this.handleClickPath.bind(this, d)}
-          onDoubleClick={this.handleDoubleClickPath.bind(this, d)}
           d={arc(d)}
           stroke="black"
           fill={color(d)}/>
@@ -164,16 +167,16 @@ class Main extends React.Component {
           left: "30px",
           top: "30px"
         }}>
-          <p>{this.props.path}</p>
-          <p>{this.state.selectedFilename}</p>
-        </div>
-        <div style={{
-          position: "absolute",
-          right: "30px",
-          bottom: "30px",
-          width: "100px"
-        }}>
-          <button className="btn btn-block btn-default btn-lg" onClick={::this.handleClickBack}>Back</button>
+          <p>
+            <span style={{color: "#888"}}>{this.props.path}</span>
+            <span>{path(this.state.selectedFile) || "/"}</span>
+          </p>
+          <div style={{
+            width: "100px"
+          }}>
+            <button className="btn btn-block btn-default btn-lg" disabled={this.state.selectedFile === null} onClick={::this.handleClickOpen}>Open</button>
+            <button className="btn btn-block btn-default btn-lg" disabled={this.props.path === ""} onClick={::this.handleClickBack}>Back</button>
+          </div>
         </div>
       </div>
     );
@@ -181,12 +184,12 @@ class Main extends React.Component {
 
   handleClickPath(d) {
     this.setState({
-      selectedFilename: getFilename(d)
+      selectedFile: d
     });
   }
 
-  handleDoubleClickPath(d) {
-    this.props.dispatch(forward(d));
+  handleClickOpen() {
+    this.props.dispatch(forward(this.state.selectedFile));
   }
 
   handleClickBack() {

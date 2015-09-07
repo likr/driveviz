@@ -3,13 +3,7 @@ import {
   FORWARD,
   LOAD_FILES
 } from "../action-types";
-
-const path = (file) => {
-  if (file.parent) {
-    return `${path(file.parent)}/${file.item ? file.item.title : file.title}`;
-  }
-  return "";
-};
+import path from "../utils/path";
 
 const fileReducer = (state={files: {}}, action) => {
   switch (action.type) {
@@ -23,7 +17,7 @@ const fileReducer = (state={files: {}}, action) => {
       };
     case LOAD_FILES:
       return {
-        path: "/",
+        path: "",
         files: action.files
       };
     default:
