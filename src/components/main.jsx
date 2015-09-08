@@ -189,7 +189,11 @@ class Main extends React.Component {
   }
 
   handleClickOpen() {
-    this.props.dispatch(forward(this.state.selectedFile));
+    if (this.state.selectedFile.item) {
+      this.props.dispatch(forward(this.state.selectedFile));
+    } else {
+      window.open(this.state.selectedFile.webContentLink);
+    }
   }
 
   handleClickBack() {
